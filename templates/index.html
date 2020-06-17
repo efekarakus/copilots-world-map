@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Copilots Travel Map 🌍</title>
+
+    <!-- Style sheets -->
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+<div class="main">
+    <h1>Copilots Travel Map</h1>
+    <div class="container">
+        <p>👋 Hello Copilot 👩‍✈️!</p>
+        <p>
+            This is a visualization of all the countries that copilots around the world traveled to.<br/>
+            Click on the countries you visited to contribute!
+        </p>
+        <p> Copilots have visited <span class="emph">{{.TotalCountries}}</span> {{if eq .TotalCountries 1}}country{{else}}countries{{end}} so far!</p>
+        <div class="visualization"></div>
+    </div>
+    <p>
+        <i>The visualization is inspired from <a href="https://observablehq.com/@karimdouieb/world-tile-grid-map">@karimdouieb/world-tile-grid-map</a>.</i>
+    </p>
+</div>
+</body>
+
+<!-- Scripts -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/flubber"></script>
+<script src="/static/travelmap.js"></script>
+</html>
