@@ -19,7 +19,7 @@ func (db *memoryDB) Save(country string) (int, error) {
 
 
 func (db *memoryDB) Results() ([]Country, error) {
-	countries := []Country{}
+	countries := []Country{} // Initialize non-empty so that the front-end renders.
 	for name, count := range db.countries {
 		countries = append(countries, Country{
 			Country: name,
