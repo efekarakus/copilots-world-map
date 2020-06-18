@@ -17,14 +17,10 @@ Resources:
       AttributeDefinitions:
         - AttributeName: Country
           AttributeType: "S"
-        - AttributeName: Visit
-          AttributeType: "N"
       BillingMode: PAY_PER_REQUEST
       KeySchema:
         - AttributeName: Country
           KeyType: HASH
-        - AttributeName: Visit
-          KeyType: RANGE
 
   travelsAccessPolicy:
     Type: AWS::IAM::ManagedPolicy
