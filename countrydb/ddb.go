@@ -7,14 +7,11 @@ import (
 	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
 type ddbClient interface {
-	GetItem(input *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error)
-	PutItem(input *dynamodb.PutItemInput) (*dynamodb.PutItemOutput, error)
 	UpdateItem(input *dynamodb.UpdateItemInput) (*dynamodb.UpdateItemOutput, error)
 	ScanPages(input *dynamodb.ScanInput, fn func(*dynamodb.ScanOutput, bool) bool) error
 }
@@ -37,14 +34,6 @@ func NewDynamoDB() DB {
 }
 
 func (db *ddb) Save(country string) (int, error) {
-	isNew, err := db.isNewCountry(country)
-	if err != nil {
-		return 0, err
-	}
-	if isNew {
-		return db.putCountry(country)
-	}
-
 	out, err := db.client.UpdateItem(&dynamodb.UpdateItemInput{
 		TableName: aws.String(db.tableName),
 		Key: map[string]*dynamodb.AttributeValue{
@@ -104,43 +93,4 @@ func (db *ddb) UniqueTotal() (int, error) {
 		}
 	}
 	return unique, nil
-}
-
-func (db *ddb) isNewCountry(country string) (bool, error) {
-	resp, err := db.client.GetItem(&dynamodb.GetItemInput{
-		TableName: aws.String(db.tableName),
-		Key: map[string]*dynamodb.AttributeValue{
-			"Country": {
-				S:   aws.String(country),
-			},
-		},
-	})
-	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			return false, fmt.Errorf("countrydb: get item %s: (code: %s, msg: %s)", country, aerr.Code(), aerr.Message())
-		}
-		return false, fmt.Errorf("countrydb: get item %s: %w", country, err)
-	}
-	return len(resp.Item) == 0, nil
-}
-
-func (db *ddb) putCountry(country string) (int, error) {
-	_, err := db.client.PutItem(&dynamodb.PutItemInput{
-		TableName: aws.String(db.tableName),
-		Item: map[string]*dynamodb.AttributeValue{
-			"Country": {
-				S: aws.String(country),
-			},
-			"Visit": {
-				N: aws.String("1"),
-			},
-		},
-	})
-	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			return 0, fmt.Errorf("countrydb: put new item %s: (code: %s, msg: %s)", country, aerr.Code(), aerr.Message())
-		}
-		return 0, fmt.Errorf("countrydb: put new item %s: %v", country, err)
-	}
-	return 1, nil
 }
