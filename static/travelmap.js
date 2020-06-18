@@ -112,7 +112,7 @@ class SquareMapChart {
             return
         }
 
-        this.map
+        var paths = this.map
             .selectAll('path')
             .data(this.world.features)
             .enter().append('path')
@@ -163,7 +163,9 @@ class SquareMapChart {
                     view: 'grid',
                 });
                 d3.select('.emph').text(() => uniqueCount.Count);
-            })
+            });
+
+        paths
             .transition()
             .duration(0)
             .attr('d', d => {
@@ -173,6 +175,13 @@ class SquareMapChart {
                     var square = [[x,y], [x+this.squareWidth,y], [x+this.squareWidth,y+this.squareWidth], [x,y+this.squareWidth], [x,y]];
                     return flubber.toPathString(square);
                 }
+            });
+
+        paths
+            .append('svg:title')
+            .text(d => {
+                console.log(d);
+                return d.properties.name;
             });
 
         this.labels

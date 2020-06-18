@@ -14,7 +14,7 @@ func main() {
 	flag.Parse()
 	log.Printf("port %s\n", *addr)
 
-	handler, err := server.New(countrydb.NewDynamoDB())
+	handler, err := server.New(countrydb.NewMemoryDB())
 	if err != nil {
 		log.Fatalf("new server: %v\n", err)
 	}
